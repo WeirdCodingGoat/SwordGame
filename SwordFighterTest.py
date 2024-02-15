@@ -9,13 +9,8 @@ def falling(sprite,obsticles):
     bottom=()
     bottom2=()
     for surface in obsticles:
-        top=(surface.rect.top,surface.rect.left)
-        top2=(surface.rect.top,surface.rect.right)
-        bottom=(sprite.rect.bottom,sprite.rect.left)
-        bottom2=(sprite.rect.bottom,sprite.rect.right)
-
         # Clipline will not be the most fit for this instance.
-        if sprite.rect.clipline(top,bottom) or sprite.rect.clipline(top2,bottom2):
+        if sprite.rect.clip(surface) or sprite.rect.center == (surface.rect.top):
                 falling = False
                 sprite.rect.bottom = (surface.rect.top)
     return falling
@@ -70,7 +65,7 @@ while running:
     enemylist.draw(screen)
     for enemy in enemylist:
         if falling(enemy,platformlist) == True:
-            enemy.rect.center = (enemy.rect.centerx,enemy.rect.centery-5)
+            enemy.rect.center = (enemy.rect.centerx,enemy.rect.centery+5)
     pygame.display.flip()
 
     clock.tick(60)
