@@ -2,15 +2,10 @@ import pygame, sys, random, math
 
 def falling(sprite,obsticles):
     falling = True
-    # The tops of a surface in obsticles.
-    top=()
-    top2=()
-    # The bottoms of sprites
-    bottom=()
-    bottom2=()
-    for surface in obsticles:
-        # Clipline will not be the most fit for this instance.
-        if sprite.rect.clip(surface) or sprite.rect.center == (surface.rect.top):
+    
+    for surface in obsticles: # iterates through all platforms
+        # checks to see if a falling object is in rage with a platform to be able to land on it.
+        if sprite.rect.bottom+5 >= (surface.rect.top) and sprite.rect.bottom-5 <= (surface.rect.top) and sprite.rect.right >= (surface.rect.left) and sprite.rect.left <= (surface.rect.right):
                 falling = False
                 sprite.rect.bottom = (surface.rect.top)
     return falling
@@ -26,6 +21,9 @@ class Platform(pygame.sprite.Sprite):
         self.image.fill("brown")
         self.rect = self.image.get_rect(center = (x,y))
 
+
+
+
 class Enemystart(pygame.sprite.Sprite):
     def __init__(self,x,y):
         super(Enemystart,self).__init__()
@@ -34,30 +32,56 @@ class Enemystart(pygame.sprite.Sprite):
         self.image.convert_alpha()
         self.image.fill("red")
         self.rect = self.image.get_rect(center = (x,y))
-        self.jumping=False
-        self.rect = self.image.get_rect(center = (x,y))
+        self.jumping=False #This is used to make sure a mob class doesn't jump in mid air (maybe more than twice).
         self.direction = random.choice([1,-1])
 
     def move(self,deltax,deltay):
         #make a collision function (make logic in game loop)
         if self.rect.left < 0 or self. rect.right>1200:
             deltax *=-5
+        self.rect.centerx = self.rect.centerx+deltax*self.direction
+        #Create a jump function or make the logic here.
+
+
+class Player(Enemystart):
+    def __init__(self,x,y):
+        super(Player,self).__init__()
+
+        self.image = pygame.Surface([30,100],pygame.SRCALPHA,32)
+        self.image.convert_alpha()
+        self.image.fill("pink")
+        self.rect = self.image.get_rect(center = (x,y))
+        self.jumping=False
+    
+    def move(self,deltax,deltay):
+        # Add an animation (Flip between frames each time the fucntion is called on or not)
+        self.rect.center(deltax,self.rect.centery)
+
+
+
+#  Game initializing
 
 pygame.init()
 screen = pygame.display.set_mode((800,600))
 pygame.display.set_caption("Fighter_test")
 clock = pygame.time.Clock()
 running = True
+#Surface creation
 platformlist=pygame.sprite.Group()
 platformlist.add(Platform(100,500,100,50))
+platformlist.add(Platform(600, 300,120,120))
 enemylist=pygame.sprite.Group()
 enemylist.add(Enemystart(100,100))
+player=Player(600,200)
 
-while running:
+while running: #Game loop
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        
+        elif event.type == KEYDOWN:
+            if event.key == K_a:
+                player
+            #Finnish control mapping.
     
     screen.fill("white")
     # --render objects here--
@@ -66,6 +90,8 @@ while running:
     for enemy in enemylist:
         if falling(enemy,platformlist) == True:
             enemy.rect.center = (enemy.rect.centerx,enemy.rect.centery+5)
+        else:
+            enemy.move(1,0)
     pygame.display.flip()
 
     clock.tick(60)
