@@ -43,11 +43,11 @@ class Enemystart(pygame.sprite.Sprite):
         #Create a jump function or make the logic here.
 
 
-class Player(Enemystart):
+class Player(pygame.sprite.Sprite):
     def __init__(self,x,y):
         super(Player,self).__init__()
 
-        self.image = pygame.Surface([30,100],pygame.SRCALPHA,32)
+        self.image = pygame.Surface([45,50],pygame.SRCALPHA,32)
         self.image.convert_alpha()
         self.image.fill("pink")
         self.rect = self.image.get_rect(center = (x,y))
@@ -55,7 +55,7 @@ class Player(Enemystart):
     
     def move(self,deltax,deltay):
         # Add an animation (Flip between frames each time the fucntion is called on or not)
-        self.rect.center(deltax,self.rect.centery)
+        self.rect.center = (deltax+self.rect.centerx,self.rect.centery)
 
 
 
@@ -73,14 +73,18 @@ platformlist.add(Platform(600, 300,120,120))
 enemylist=pygame.sprite.Group()
 enemylist.add(Enemystart(100,100))
 player=Player(600,200)
+enemylist.add(player)
 
 while running: #Game loop
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == KEYDOWN:
-            if event.key == K_a:
-                player
+
+    
+        if pygame.key.get_pressed()[pygame.K_a]==True and pygame.key.get_pressed()[pygame.K_d] == False:
+            player.move(-5,0)
+        elif pygame.key.get_pressed()[pygame.K_d]==True and pygame.key.get_pressed()[pygame.K_a]==False:
+            player.move(5,0)
             #Finnish control mapping.
     
     screen.fill("white")
@@ -91,7 +95,8 @@ while running: #Game loop
         if falling(enemy,platformlist) == True:
             enemy.rect.center = (enemy.rect.centerx,enemy.rect.centery+5)
         else:
-            enemy.move(1,0)
+            if enemy != player:
+                enemy.move(1,0)
     pygame.display.flip()
 
     clock.tick(60)
