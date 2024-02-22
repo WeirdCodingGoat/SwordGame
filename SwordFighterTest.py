@@ -55,7 +55,13 @@ class Player(pygame.sprite.Sprite):
     
     def move(self,deltax,deltay):
         # Add an animation (Flip between frames each time the fucntion is called on or not)
-        self.rect.center = (deltax+self.rect.centerx,self.rect.centery)
+        self.rect.centerx = deltax+self.rect.centerx
+        if deltay:
+            
+            self.rect.centery = +self.rect.centery
+            # If gravity interupts jump un hashtag the and jump part of the checking for falling.
+            # Maybe use a while loop.
+
 
 
 
@@ -92,7 +98,7 @@ while running: #Game loop
     platformlist.draw(screen)
     enemylist.draw(screen)
     for enemy in enemylist:
-        if falling(enemy,platformlist) == True:
+        if falling(enemy,platformlist) == True: #and enemy.jumping == False:
             enemy.rect.center = (enemy.rect.centerx,enemy.rect.centery+5)
         else:
             if enemy != player:
