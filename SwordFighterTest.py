@@ -10,6 +10,11 @@ def falling(sprite,obsticles):
                 sprite.rect.bottom = (surface.rect.top)
     return falling
 
+def player_move(player):
+    if pygame.key.get_pressed()[pygame.K_a]==True and pygame.key.get_pressed()[pygame.K_d] == False:
+            player.move(-3,0)
+    elif pygame.key.get_pressed()[pygame.K_d]==True and pygame.key.get_pressed()[pygame.K_a]==False:
+        player.move(3,0)
 
 
 # pygame documentation: https://www.pygame.org/docs/
@@ -85,12 +90,14 @@ while running: #Game loop
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
     
-        if pygame.key.get_pressed()[pygame.K_a]==True and pygame.key.get_pressed()[pygame.K_d] == False:
-            player.move(-5,0)
-        elif pygame.key.get_pressed()[pygame.K_d]==True and pygame.key.get_pressed()[pygame.K_a]==False:
-            player.move(5,0)
+        player_move(player)
+    
+        #if pygame.key.get_pressed()[pygame.K_a]==True and pygame.key.get_pressed()[pygame.K_d] == False:
+         #   player.move(-3,0)
+       # elif pygame.key.get_pressed()[pygame.K_d]==True and pygame.key.get_pressed()[pygame.K_a]==False:
+        #    player.move(3,0)
+            
             #Finnish control mapping.
     
     screen.fill("white")
