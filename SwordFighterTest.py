@@ -1,20 +1,51 @@
 import pygame, sys, random, math
 
+def jump(sprite,obsticles):
+    obsticle=0
+    sprite.jumping=True
+    ypos1=sprite.rect.top
+  #  for surface in obsticles:
+   #     if surface.solid:
+    #        if surface.rect.bottom < ypos1-20 and surface.rect.right > sprite.rect.left and surface.rect.left < sprite.rect.right:
+     #           obsticle=surface
+   # if type(obsticle) != type(int(1)):
+    #    while sprite.rect.top > ypos1-10 and sprite.rect.top != obsticle.rect.bottom:
+     #       if sprite.rect.top < obsticle.rect.bottom:
+      #          sprite.rect.top-=4
+       #     elif sprite.rect.top-4 > obsticle.rect.bottom and obsticle.rect.right > sprite.rect.left and obsticle.rect.left < sprite.rect.right:
+        #        sprite.rect.top-=4
+         #   else:
+          #      sprite.rect.top=obsticle.rect.bottom
+    # Make sure to check for jumping up into an object from adjacent placement.
+    while sprite.rect.top > ypos1-20:
+        sprite.rect.top-=4
+    sprite.jumping=False
+
+#    if type(obsticle) != type(int(1)):
+ #       while sprite.rect.top < ypos1-10 and sprite.rect.top-4 > obsticle.rect.bottom or obsticle.rect.right < obsticle.rect.left or obsticle.rect.left > sprite.rect.right:
+  #          sprite.rect.top-=4
+   #     if sprite.rect.top -3 <= obsticle.rect.bottom 
+    
+
+
 def falling(sprite,obsticles):
     falling = True
-    
+
     for surface in obsticles: # iterates through all platforms
         # checks to see if a falling object is in rage with a platform to be able to land on it.
-        if sprite.rect.bottom+5 >= (surface.rect.top) and sprite.rect.bottom-5 <= (surface.rect.top) and sprite.rect.right >= (surface.rect.left) and sprite.rect.left <= (surface.rect.right):
-                falling = False
-                sprite.rect.bottom = (surface.rect.top)
+        if surface.solid or surface.semisolid:
+            if sprite.rect.bottom+5 >= (surface.rect.top) and sprite.rect.bottom-5 <= (surface.rect.top) and sprite.rect.right > (surface.rect.left) and sprite.rect.left < (surface.rect.right):
+                    falling = False
+                    sprite.rect.bottom = (surface.rect.top)
     return falling
 
-def player_move(player):
+def player_move(player,obsticles):
     if pygame.key.get_pressed()[pygame.K_a]==True and pygame.key.get_pressed()[pygame.K_d] == False:
-            player.move(-3,0)
+        player.move(-3,0)
     elif pygame.key.get_pressed()[pygame.K_d]==True and pygame.key.get_pressed()[pygame.K_a]==False:
         player.move(3,0)
+    elif pygame.key.get_pressed()[pygame.K_w]==True:
+        jump(player,obsticles)
 
 
 # pygame documentation: https://www.pygame.org/docs/
@@ -25,6 +56,8 @@ class Platform(pygame.sprite.Sprite):
         self.image.convert_alpha()
         self.image.fill("brown")
         self.rect = self.image.get_rect(center = (x,y))
+        self.solid = True
+        self.semisolid = True
 
 
 
@@ -57,6 +90,7 @@ class Player(pygame.sprite.Sprite):
         self.image.fill("pink")
         self.rect = self.image.get_rect(center = (x,y))
         self.jumping=False
+        self.jumps=0
     
     def move(self,deltax,deltay):
         # Add an animation (Flip between frames each time the fucntion is called on or not)
@@ -91,7 +125,7 @@ while running: #Game loop
         if event.type == pygame.QUIT:
             running = False
     
-        player_move(player)
+        player_move(player,platformlist)
     
         #if pygame.key.get_pressed()[pygame.K_a]==True and pygame.key.get_pressed()[pygame.K_d] == False:
          #   player.move(-3,0)
@@ -105,7 +139,7 @@ while running: #Game loop
     platformlist.draw(screen)
     enemylist.draw(screen)
     for enemy in enemylist:
-        if falling(enemy,platformlist) == True: #and enemy.jumping == False:
+        if falling(enemy,platformlist) == True and not enemy.jumping: #and enemy.jumping == False:
             enemy.rect.center = (enemy.rect.centerx,enemy.rect.centery+5)
         else:
             if enemy != player:
