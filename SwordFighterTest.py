@@ -2,6 +2,7 @@ import pygame, sys, random, math
 
 def jump(sprite,obsticles):
     obsticle=0
+    
     sprite.jumping=True
     ypos1=sprite.rect.top
   #  for surface in obsticles:
@@ -17,8 +18,9 @@ def jump(sprite,obsticles):
          #   else:
           #      sprite.rect.top=obsticle.rect.bottom
     # Make sure to check for jumping up into an object from adjacent placement.
-    while sprite.rect.top > ypos1-20:
-        sprite.rect.top-=4
+    while sprite.rect.top > ypos1-80:
+      sprite.rect.top-=4
+      
     sprite.jumping=False
 
 #    if type(obsticle) != type(int(1)):
@@ -44,7 +46,10 @@ def player_move(player,obsticles):
         player.move(-3,0)
     elif pygame.key.get_pressed()[pygame.K_d]==True and pygame.key.get_pressed()[pygame.K_a]==False:
         player.move(3,0)
-    elif pygame.key.get_pressed()[pygame.K_w]==True:
+    if pygame.key.get_pressed()[pygame.K_w]==True:
+      print(player.jumps)
+      if falling(player,platformlist) != True or player.jumps <1: #Checks if player has jumped 2 times consecuativly. ("or" mut be bugging it)
+        player.jumps+=1
         jump(player,obsticles)
 
 
@@ -58,6 +63,7 @@ class Platform(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (x,y))
         self.solid = True
         self.semisolid = True
+        
 
 
 
@@ -72,6 +78,7 @@ class Enemystart(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (x,y))
         self.jumping=False #This is used to make sure a mob class doesn't jump in mid air (maybe more than twice).
         self.direction = random.choice([1,-1])
+        self.name = "enemy"
 
     def move(self,deltax,deltay):
         #make a collision function (make logic in game loop)
@@ -87,10 +94,11 @@ class Player(pygame.sprite.Sprite):
 
         self.image = pygame.Surface([45,50],pygame.SRCALPHA,32)
         self.image.convert_alpha()
-        self.image.fill("pink")
+        self.image.fill("#ff42ba")
         self.rect = self.image.get_rect(center = (x,y))
         self.jumping=False
         self.jumps=0
+        self.name = "player"
     
     def move(self,deltax,deltay):
         # Add an animation (Flip between frames each time the fucntion is called on or not)
@@ -126,13 +134,7 @@ while running: #Game loop
             running = False
     
         player_move(player,platformlist)
-    
-        #if pygame.key.get_pressed()[pygame.K_a]==True and pygame.key.get_pressed()[pygame.K_d] == False:
-         #   player.move(-3,0)
-       # elif pygame.key.get_pressed()[pygame.K_d]==True and pygame.key.get_pressed()[pygame.K_a]==False:
-        #    player.move(3,0)
-            
-            #Finnish control mapping.
+        player_move(player,platformlist)
     
     screen.fill("white")
     # --render objects here--
@@ -141,9 +143,14 @@ while running: #Game loop
     for enemy in enemylist:
         if falling(enemy,platformlist) == True and not enemy.jumping: #and enemy.jumping == False:
             enemy.rect.center = (enemy.rect.centerx,enemy.rect.centery+5)
+        if enemy == player and falling(enemy,platformlist) != False: # Resets jump count once landed (Not working)
+          
+          enemy.jumps=0
         else:
             if enemy != player:
                 enemy.move(1,0)
+        if enemy.rect.centery> 700:
+          enemy.rect.center = random.choice([(100,100),(600,200)])
     pygame.display.flip()
 
     clock.tick(60)
