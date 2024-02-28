@@ -122,6 +122,7 @@ running = True
 #Surface creation
 platformlist=pygame.sprite.Group()
 platformlist.add(Platform(100,500,100,50))
+platformlist.add(Platform(370,420,300,50))
 platformlist.add(Platform(600, 300,120,120))
 enemylist=pygame.sprite.Group()
 enemylist.add(Enemystart(100,100))
