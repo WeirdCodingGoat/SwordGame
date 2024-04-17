@@ -1,40 +1,15 @@
 import pygame, sys, random, math
 
-def jump(sprite,obsticles):
-    obsticle=0
-    
-    sprite.jumping=True
-    ypos1=sprite.rect.top
-  #  for surface in obsticles:
-   #     if surface.solid:
-    #        if surface.rect.bottom < ypos1-20 and surface.rect.right > sprite.rect.left and surface.rect.left < sprite.rect.right:
-     #           obsticle=surface
-   # if type(obsticle) != type(int(1)):
-    #    while sprite.rect.top > ypos1-10 and sprite.rect.top != obsticle.rect.bottom:
-     #       if sprite.rect.top < obsticle.rect.bottom:
-      #          sprite.rect.top-=4
-       #     elif sprite.rect.top-4 > obsticle.rect.bottom and obsticle.rect.right > sprite.rect.left and obsticle.rect.left < sprite.rect.right:
-        #        sprite.rect.top-=4
-         #   else:
-          #      sprite.rect.top=obsticle.rect.bottom
-    # Make sure to check for jumping up into an object from adjacent placement.
-    while sprite.rect.top > ypos1-80:
-      sprite.rect.top-=4
-      
-    sprite.jumping=False
-
-#    if type(obsticle) != type(int(1)):
- #       while sprite.rect.top < ypos1-10 and sprite.rect.top-4 > obsticle.rect.bottom or obsticle.rect.right < obsticle.rect.left or obsticle.rect.left > sprite.rect.right:
-  #          sprite.rect.top-=4
-   #     if sprite.rect.top -3 <= obsticle.rect.bottom 
-    
+def slash(sword,objects):
+    sword.swing = True
+    pass
 
 
 def falling(sprite,obsticles):
     falling = True
 
     for surface in obsticles: # iterates through all platforms
-        # checks to see if a falling object is in rage of a platform to be able to land on it.
+        # checks to see if a falling object is in range with a platform to be able to land on it.
         if surface.solid or surface.semisolid:
             if sprite.rect.bottom+5 >= (surface.rect.top) and sprite.rect.bottom-5 <= (surface.rect.top) and sprite.rect.right > (surface.rect.left) and sprite.rect.left < (surface.rect.right):
                     falling = False
@@ -42,16 +17,16 @@ def falling(sprite,obsticles):
     return falling
 
 def player_move(player,obsticles):
+    #Input documentation: https://www.pygame.org/docs/ref/key.html
     if pygame.key.get_pressed()[pygame.K_a]==True and pygame.key.get_pressed()[pygame.K_d] == False:
         player.move(-3,0)
     elif pygame.key.get_pressed()[pygame.K_d]==True and pygame.key.get_pressed()[pygame.K_a]==False:
         player.move(3,0)
-    if pygame.key.get_pressed()[pygame.K_w]==True:
-      print(player.jumps)
-      # To effectivly limit jumping check with the falling function to see when the player reaches the ground after their max amount of jumps. 
-      if falling(player,platformlist) != True or player.jumps <1: #Checks if player has jumped 2 times consecuativly. ("or" mut be bugging it)
-        player.jumps+=1
-        jump(player,obsticles)
+   # if pygame.key.get_pressed()[pygame.K_w]==True:
+    #  print(player.jumps)
+     # if falling(player,platformlist) != True or player.jumps <1: #Checks if player has jumped 2 times consecuativly. ("or" mut be bugging it)
+      #  player.jumps+=1
+       # jump(player,obsticles)
 
 
 # pygame documentation: https://www.pygame.org/docs/
@@ -65,8 +40,6 @@ class Platform(pygame.sprite.Sprite):
         self.solid = True
         self.semisolid = True
         
-
-
 
 
 class Enemystart(pygame.sprite.Sprite):
@@ -89,6 +62,18 @@ class Enemystart(pygame.sprite.Sprite):
         #Create a jump function or make the logic here.
 
 
+class Sword(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        super(Sword,self).__init__()
+
+        self.image = pygame.Surface([22,35],pygame.SRCALPHA,32)
+        self.image.convert_alpha()
+        self.image.fill("blue")
+        self.rect = self.image.get_rect(center = (x,y))
+        self.frame=0
+        self.swing=False
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self,x,y):
         super(Player,self).__init__()
@@ -107,7 +92,7 @@ class Player(pygame.sprite.Sprite):
         if deltay:
             
             self.rect.centery = +self.rect.centery
-            # If gravity interupts jump un hashtag the and jump part of the checking for falling.
+            # If gravity interupts jump, hashtag the "and jump" part of the checking for falling.
             # Maybe use a while loop.
 
 
@@ -125,23 +110,45 @@ platformlist=pygame.sprite.Group()
 platformlist.add(Platform(100,500,100,50))
 platformlist.add(Platform(370,420,300,50))
 platformlist.add(Platform(600, 300,120,120))
+
 enemylist=pygame.sprite.Group()
 enemylist.add(Enemystart(100,100))
 player=Player(600,200)
 enemylist.add(player)
 
+oneswordgroup=pygame.sprite.Group()
+oldmansword=Sword(400,300)
+
 while running: #Game loop
     for event in pygame.event.get():
+        #Event documentation: https://www.pygame.org/docs/ref/key.html
+        #https://www.pygame.org/docs/ref/event.html?highlight=event#module-pygame.event
         if event.type == pygame.QUIT:
             running = False
+
     
         player_move(player,platformlist)
         player_move(player,platformlist)
+        if event.type == pygame.KEYDOWN:
+                                                        # add specify key and continue to test. (maybe put sword further away)
+            slash(oldmansword,enemylist)
+
     
     screen.fill("white")
     # --render objects here--
     platformlist.draw(screen)
     enemylist.draw(screen)
+    if oldmansword.swing:
+        print("ran")
+        oldmansword.rect.centerx = player.rect.centerx-10
+        oldmansword.rect.centery = player.rect.centery
+        oneswordgroup.draw(screen)
+        oldmansword.frame+=1
+        if oldmansword.frame==100  :
+            oldmansword.swing = False
+        # Add hit detection here?
+        
+    
     for enemy in enemylist:
         if falling(enemy,platformlist) == True and not enemy.jumping: #and enemy.jumping == False:
             enemy.rect.center = (enemy.rect.centerx,enemy.rect.centery+5)
