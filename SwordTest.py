@@ -110,19 +110,21 @@ platformlist=pygame.sprite.Group()
 platformlist.add(Platform(100,500,100,50))
 platformlist.add(Platform(370,420,300,50))
 platformlist.add(Platform(600, 300,120,120))
-
+#Enemy and player creation
 enemylist=pygame.sprite.Group()
 enemylist.add(Enemystart(100,100))
 player=Player(600,200)
 enemylist.add(player)
-
+#Sword creation
 oneswordgroup=pygame.sprite.Group()
 oldmansword=Sword(400,300)
+oneswordgroup.add(oldmansword)
 
 while running: #Game loop
     for event in pygame.event.get():
         #Event documentation: https://www.pygame.org/docs/ref/key.html
         #https://www.pygame.org/docs/ref/event.html?highlight=event#module-pygame.event
+         #https://www.geeksforgeeks.org/how-to-get-keyboard-input-in-pygame/ (event.key)
         if event.type == pygame.QUIT:
             running = False
 
@@ -130,22 +132,25 @@ while running: #Game loop
         player_move(player,platformlist)
         player_move(player,platformlist)
         if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_k:
                                                         # add specify key and continue to test. (maybe put sword further away)
-            slash(oldmansword,enemylist)
+                slash(oldmansword,enemylist)
 
     
     screen.fill("white")
     # --render objects here--
     platformlist.draw(screen)
     enemylist.draw(screen)
+
     if oldmansword.swing:
-        print("ran")
-        oldmansword.rect.centerx = player.rect.centerx-10
+        oldmansword.rect.centerx = player.rect.centerx-30
         oldmansword.rect.centery = player.rect.centery
         oneswordgroup.draw(screen)
         oldmansword.frame+=1
-        if oldmansword.frame==100  :
+        print(oldmansword.frame)
+        if oldmansword.frame==60:
             oldmansword.swing = False
+            oldmansword.frame=0
         # Add hit detection here?
         
     
