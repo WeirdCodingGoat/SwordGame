@@ -78,7 +78,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self,x,y):
         super(Player,self).__init__()
 
-        self.image = pygame.Surface([45,50],pygame.SRCALPHA,32)
+        self.image = pygame.Surface([46,60],pygame.SRCALPHA,32)
         self.image.convert_alpha()
         self.image.fill("#ff42ba")
         self.rect = self.image.get_rect(center = (x,y))
