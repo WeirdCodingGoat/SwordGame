@@ -23,12 +23,18 @@ def load_level(level):
 
     for row in 20:
         for character in 40:
-            if len(cordinates) == 0 and levels.readline(row)(character) == "-":
+            if len(cordinates) == 0 and levels.readline(row)(character) == "-": 
+                #bug might appear when program reads cordinates and adds more objects when reading 
+                #a line with filler for a block.
                 cordinates.append((character,row))
-            elif 
-        # look in cordinates to not make duplicates (use inequalities), 
+            elif len(cordinates) >0 and not levels.readline(row)(character) == "-":
+                cordinates.append("end") # Maybe replace this with another flag/word?
+
+
+        # look in platforms to not make duplicates (use inequalities), 
         # Append cordinates to "platform" down to the bottom of the platform,
-        # Take the first and the last cordinates and append them to  platforms as "["Enemy type",(x,y)]" 
+        # Take the first and the last cordinates and append them to platforms as [(x1,y1),(x2,y2)]
+        # enemy format = "["Enemy type",(x,y)]" 
             
         platforms.append(cordinates)
         cordinates=[]
