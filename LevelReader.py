@@ -18,8 +18,8 @@ def load_level(selected):
     with open("level_maps.txt") as level:
         levels = level.read()
     header=(selected*20)+1
-
-    levels=levels.split()[header:header+20]
+    print(levels)
+    levels=levels[header:header+20]
     level.close()
     level=[[]]
     print(levels)
@@ -29,14 +29,14 @@ def load_level(selected):
             level.append([spot])
         else:
             level[-1].append(spot)
-
+        
     print(level)
     platforms=[]
     platform=[]
     cordinates=[]
     check=1
 
-    for row in range(20): # add a start and a stop (start:header) (stop=header+20)
+    for row in range(header,header+20): # add a start and a stop (start:header) (stop=header+20)
         for character in range(40):
             print("row",row,"char",character)
             if len(cordinates) == 0 and level[row-1][character-1] == "-": 
