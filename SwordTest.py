@@ -20,8 +20,10 @@ def player_move(player,obsticles):
     #Input documentation: https://www.pygame.org/docs/ref/key.html
     if pygame.key.get_pressed()[pygame.K_a]==True and pygame.key.get_pressed()[pygame.K_d] == False:
         player.move(-3,0)
+        oldmansword.side=30
     elif pygame.key.get_pressed()[pygame.K_d]==True and pygame.key.get_pressed()[pygame.K_a]==False:
         player.move(3,0)
+        oldmansword.side=-30
    # if pygame.key.get_pressed()[pygame.K_w]==True:
     #  print(player.jumps)
      # if falling(player,platformlist) != True or player.jumps <1: #Checks if player has jumped 2 times consecuativly. ("or" mut be bugging it)
@@ -72,6 +74,7 @@ class Sword(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (x,y))
         self.frame=0
         self.swing=False
+        self.side=30
 
 
 class Player(pygame.sprite.Sprite):
@@ -120,6 +123,7 @@ oneswordgroup=pygame.sprite.Group()
 oldmansword=Sword(400,300)
 oneswordgroup.add(oldmansword)
 
+
 while running: #Game loop
     for event in pygame.event.get():
         #Event documentation: https://www.pygame.org/docs/ref/key.html
@@ -131,6 +135,7 @@ while running: #Game loop
     
         player_move(player,platformlist)
         player_move(player,platformlist)
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_k:
                                                         # add specify key and continue to test. (maybe put sword further away)
@@ -143,7 +148,7 @@ while running: #Game loop
     enemylist.draw(screen)
 
     if oldmansword.swing:
-        oldmansword.rect.centerx = player.rect.centerx-30
+        oldmansword.rect.centerx = player.rect.centerx#-oldmansword.side
         oldmansword.rect.centery = player.rect.centery
         oneswordgroup.draw(screen)
         oldmansword.frame+=1
