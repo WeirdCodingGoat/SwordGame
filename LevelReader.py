@@ -19,12 +19,11 @@ def load_level(selected):
         levels = level.read()
     header=(selected*20)+1
     print(levels)
-    levels=levels[header:header+20]
     level.close()
     level=[[]]
     print(levels)
     for spot in levels:
-        print(spot,len(level))
+        print(spot,levels.find(spot))
         if len(level[-1]) == 40:
             level.append([spot])
         else:
@@ -43,6 +42,7 @@ def load_level(selected):
                 #bug might appear when program reads cordinates and adds more objects when reading 
                 #a line with filler for a block.
                 cordinates.append((character,row))
+
 
             elif len(cordinates) >0 and not level[row-1][character-1] == "-" and cordinates[-1]!="end":
                 cordinates.append("end") # Maybe replace this with another flag/word?
@@ -67,7 +67,7 @@ def load_level(selected):
                         if check < platforms[-1]:
                             platforms[-1]=check # Might get an assignment error.
                     else:
-                        platforms.append(check)
+                        platforms.append(check) # check this odd
                 platforms.append([platform[0],(platform[-1][0],platforms.pop(check))])
                 platform=[]
         # look in platforms to not make duplicates (use inequalities), 
