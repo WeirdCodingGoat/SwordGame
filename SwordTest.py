@@ -222,21 +222,30 @@ while running: #Game loop
         if enemy.rect.centery> 700:
           enemy.rect.center = random.choice([(100,100),(600,200)])
         if enemy != player:
-            if pygame.sprite.collide_rect(player, enemy):
-                player.hp-=1
-                if player.rect.centerx <= enemy.rect.centerx:
-                    player.rect.centerx-=30
-                    oldmansword.side=42
-                else:
-                    player.rect.centerx+=30
-                    oldmansword.side=42
-         #           if oldmansword.frame==30:             Set up Player invinsability timer!!!
-         #   oldmansword.swing = False
-          #  oldmansword.hit=False
-          #  oldmansword.frame=0
-                if player.hp <1:
-                    print(player.hp)
-                    player.jumping=True
+            if player.frame==30: 
+                if pygame.sprite.collide_rect(player, enemy):
+                    player.hp-=1
+                    if player.rect.centerx <= enemy.rect.centerx:
+                        player.rect.centerx-=40
+                        oldmansword.side=42
+                    else:
+                        player.rect.centerx+=40
+                        oldmansword.side=42
+                                    #   Set up Player invinsability timer!!!
+                        #   oldmansword.swing = False
+                        #  oldmansword.hit=False
+                        #  oldmansword.frame=0
+                    if player.hp <1:
+                        print(player.hp)
+                        player.jumping=True
+                    player.frame=0
+                    player.jumps=1
+        if player.jumps==1 and player.frame<29:
+            player.frame+=1
+        else:
+            player.jumps=0
+            
+
 
 
     pygame.display.flip()
