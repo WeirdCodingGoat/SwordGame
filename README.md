@@ -1,2 +1,2 @@
 # SwordGame
-A repo for the college board project submission
+Cool indie game I'm making.
